@@ -1,8 +1,7 @@
 # cdh-install-script
-这是一个配置cdh基本环境的脚本，只支持centos7系统。
-声明:
-	在使用前，请查看主节点系统时间和实际时间是否一致，如果不一致，请手动修改。
-	如果公司内部有时间服务器，请修改file下的ntp.conf.master的配置文件，指向时间服务器。
+#这是一个配置cdh基本环境的脚本，只支持centos7系统。
+#在使用前，请查看主节点系统时间和实际时间是否一致，如果不一致，请手动修改。
+#如果公司内部有时间服务器，请修改file下的ntp.conf.master的配置文件，指向时间服务器。
 1、在master节点创建id_rsa.pub
 ssh-keygen -t rsa
 2、修改hosts文件
