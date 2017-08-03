@@ -17,3 +17,5 @@ for i in `cat /etc/hosts | grep -v 'localhost' | awk '{print $1}'`;do ssh-keysca
 /root/cm/file/ kdc.conf
 /root/cm/file/ krb5.conf
 /root/cm/file/ kadm5.acl
+8、file目录下，cm文件夹和cdh文件夹存储cdh的parcels包，cm存储cloudera-manager的rpm包。
+下载地址：http://archive.cloudera.com/cdh5/
