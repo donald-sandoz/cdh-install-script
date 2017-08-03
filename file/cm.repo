@@ -1,0 +1,6 @@
+[cm]
+name=cm
+baseurl=http://192.168.23.131/cm
+enabled=1
+gpgcheck=0
+

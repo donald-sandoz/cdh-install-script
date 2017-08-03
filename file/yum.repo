@@ -1,0 +1,7 @@
+[yum]
+name=yum
+baseurl=http://192.168.23.131/yum
+#baseurl=file:///mnt
+enabled=1
+gpgcheck=0
+
