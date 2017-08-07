@@ -61,14 +61,14 @@ NodeName=`cat /etc/hosts | grep -v "localhost" | awk '/./ {print $2}' | head -n1
 	create user 'hue'@'%' identified by '$Mysqlpasswd';
 	create database hue DEFAULT CHARACTER SET utf8;
 	grant all privileges on hue.* to 'hue'@'%';
-	grant all privileges on hue.* to 'amon'@'$NodeName' identified by '$Mysqlpasswd';
-	grant all privileges on hue.* to 'rman'@'$NodeName' identified by '$Mysqlpasswd';
-	grant all privileges on hue.* to 'oozie'@'$NodeName' identified by '$Mysqlpasswd';
-	grant all privileges on hue.* to 'hive'@'$NodeName' identified by '$Mysqlpasswd';
-	grant all privileges on hue.* to 'sentry'@'$NodeName' identified by '$Mysqlpasswd';
+	grant all privileges on amon.* to 'amon'@'$NodeName' identified by '$Mysqlpasswd';
+	grant all privileges on rman.* to 'rman'@'$NodeName' identified by '$Mysqlpasswd';
+	grant all privileges on oozie.* to 'oozie'@'$NodeName' identified by '$Mysqlpasswd';
+	grant all privileges on hive.* to 'hive'@'$NodeName' identified by '$Mysqlpasswd';
+	grant all privileges on sentry.* to 'sentry'@'$NodeName' identified by '$Mysqlpasswd';
 	grant all privileges on hue.* to 'hue'@'$NodeName' identified by '$Mysqlpasswd';
-	grant all privileges on hue.* to 'nav'@'$NodeName' identified by '$Mysqlpasswd';
-	grant all privileges on hue.* to 'navms'@'$NodeName' identified by '$Mysqlpasswd';
+	grant all privileges on nav.* to 'nav'@'$NodeName' identified by '$Mysqlpasswd';
+	grant all privileges on navms.* to 'navms'@'$NodeName' identified by '$Mysqlpasswd';
 	flush privileges;"
 	echo "mysql install success"
 
@@ -96,11 +96,12 @@ NodeName=`cat /etc/hosts | grep -v "localhost" | awk '/./ {print $2}' | head -n1
 	yum -y install oracle-j2sdk1.7 >/dev/null 2>>err.log
 	echo "export JAVA_HOME=/usr/java/jdk1.7.0_67-cloudera" >> /etc/profile
 	echo "export JRE_HOME=/usr/java/jdk1.7.0_67-cloudera/jre" >> /etc/profile
+	echo "export PATH=$JAVA_HOME/bin:$PATH" >> /etc/profile
 	cp $PWD/file/mysql-connector-java-5.1.34.jar /usr/java/jdk1.7.0_67-cloudera/lib
 	ln -s /usr/java/jdk1.7.0_67-cloudera/lib/mysql-connector-java-5.1.34.jar /usr/java/jdk1.7.0_67-cloudera/lib/mysql-connector-java.jar
 	if [ ! -d "/usr/share/java" ];then
 		mkdir -p /usr/share/java
-		cp $PWD/file/mysql-connector-java-5.1.34.jar /usr/share/java
+		cp $PWD/file/mysql-connector-java-5.1.34.jar /usr/share/java/mysql-connector-java.jar
 	else
 	   	cp $PWD/file/mysql-connector-java-5.1.34.jar /usr/share/java
 	fi
@@ -119,3 +120,9 @@ NodeName=`cat /etc/hosts | grep -v "localhost" | awk '/./ {print $2}' | head -n1
 	/etc/init.d/cloudera-scm-agent start
 	/etc/init.d/cloudera-scm-server start
 	yum install expect -y >/dev/null 2>>err.log
+
+
+
+
+
+	

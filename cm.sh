@@ -6,7 +6,7 @@ Yumdir="/etc/yum.repos.d"
 jdk=`rpm -qa | grep openjdk`
 yum -y remove $jdk >/dev/null
 #stop selinux
-sed -i "s/SELINUX=enforcing/SELINUX=disabled/g" /etc/sysconfig/selinux
+sed -i "s/SELINUX=enforcing/SELINUX=disabled/g" /etc/selinux/config
 #stop iptables
 systemctl stop firewalld
 systemctl disable firewalld
