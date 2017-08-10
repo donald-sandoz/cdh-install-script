@@ -1,5 +1,13 @@
 #!/bin/bash
 NodeName=`cat /etc/hosts | grep -v "localhost" | awk '/./ {print $2}' | head -n1`		#指定主节点的主机名
+Yumdir="/etc/yum.repos.d"
+for i in `ls $Yumdir/`
+do 
+	mv $Yumdir/$i $Yumdir/$i.bak	
+done
+#rm -f $Yumdir/*
+cp /root/yum.repo $Yumdir/yum.repo
+cp /root/cm.repo $Yumdir/cm.rep
 
 #install ntpd
 

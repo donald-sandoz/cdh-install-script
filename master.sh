@@ -5,7 +5,8 @@ PWD=`pwd`
 MysqlName="root"
 Mysqlpasswd="root@123"
 Yumdir=/etc/yum.repos.d
-NodeName=`cat /etc/hosts | grep -v "localhost" | awk '/./ {print $2}' | head -n1`
+MasterName=`cat /etc/hosts | grep -v "localhost" | awk '/./ {print $2}' | head -n1`
+MasterIp=`cat /etc/hosts | grep -v "localhost" | awk '/./ {print $1}' | head -n1`
 #mount 
 #	for i in `ls $Yumdir/`;do mv $Yumdir/$i $Yumdir/$i.bak;done
 	rm -f $Yumdir/*
@@ -22,10 +23,12 @@ NodeName=`cat /etc/hosts | grep -v "localhost" | awk '/./ {print $2}' | head -n1
 	mkdir /var/www/html/yum
 	mount -o loop $PWD/file/centos7.iso /var/www/html/yum
 	mv $Yumdir/iso.repo $Yumdir/iso.repo.bak
+	sed -i "3c baseurl=http://$MasterIp/cm" $pwd/file/cm.repo
+	sed -i "3c baseurl=http://$MasterIp/cm" $pwd/file/yum.repo
 	cp $PWD/file/yum.repo $Yumdir/
 	cp -rp $PWD/file/cm /var/www/html/		#配置cm的yum源
-	cp -rp $PWD/file/cdh /var/www/html/
-	cp $PWD/file/cm.repo $Yumdir/
+	cp -rp $PWD/file/cdh /var/www/html/			#
+	cp $PWD/file/cm.repo $Yumdir/cm.repo
 	cd /var/www/html/cm
 	createrepo .
 	echo "success mount......"
@@ -35,40 +38,40 @@ NodeName=`cat /etc/hosts | grep -v "localhost" | awk '/./ {print $2}' | head -n1
 	echo "y" | cp -b $PWD/file/my.cnf.mariadb /etc/my.cnf	
 	systemctl start mariadb
 	systemctl enable mariadb
-	mysqladmin -u $MysqlName password "$Mysqlpasswd"
-	mysql -u$MysqlName -p"$Mysqlpasswd" -e " 
-	create user 'amon'@'%' identified by '$Mysqlpasswd';
+	mysqladmin -u $MysqlName password $Mysqlpasswd
+	mysql -u$MysqlName -p$Mysqlpasswd -e " 
+	create user 'amon'@'%' identified by "$Mysqlpasswd";
 	create database amon DEFAULT CHARACTER SET utf8;
 	grant all privileges on amon.* to 'amon'@'%';
-	create user 'rman'@'%' identified by '$Mysqlpasswd';
+	create user 'rman'@'%' identified by "$Mysqlpasswd";
 	create database rman DEFAULT CHARACTER SET utf8;
 	grant all privileges on rman.* to 'rman'@'%';
-	create user 'oozie'@'%' identified by '$Mysqlpasswd';
+	create user 'oozie'@'%' identified by "$Mysqlpasswd";
 	create database oozie DEFAULT CHARACTER SET utf8;
 	grant all privileges on oozie.* to 'oozie'@'%';
-	create user 'hive'@'%' identified by '$Mysqlpasswd';
+	create user 'hive'@'%' identified by "$Mysqlpasswd";
 	create database hive DEFAULT CHARACTER SET utf8;
 	grant all privileges on hive.* to 'hive'@'%';
-	create user 'nav'@'%' identified by '$Mysqlpasswd';
+	create user 'nav'@'%' identified by "$Mysqlpasswd";
 	create database nav DEFAULT CHARACTER SET utf8;
 	grant all privileges on nav.* to 'nav'@'%';
-	create user 'navms'@'%' identified by '$Mysqlpasswd';
+	create user 'navms'@'%' identified by "$Mysqlpasswd";
 	create database navms DEFAULT CHARACTER SET utf8;
 	grant all privileges on navms.* to 'navms'@'%';
-	create user 'sentry'@'%' identified by '$Mysqlpasswd';
+	create user 'sentry'@'%' identified by "$Mysqlpasswd";
 	create database sentry DEFAULT CHARACTER SET utf8;
 	grant all privileges on sentry.* to 'sentry'@'%';
-	create user 'hue'@'%' identified by '$Mysqlpasswd';
+	create user 'hue'@'%' identified by "$Mysqlpasswd";
 	create database hue DEFAULT CHARACTER SET utf8;
 	grant all privileges on hue.* to 'hue'@'%';
-	grant all privileges on amon.* to 'amon'@'$NodeName' identified by '$Mysqlpasswd';
-	grant all privileges on rman.* to 'rman'@'$NodeName' identified by '$Mysqlpasswd';
-	grant all privileges on oozie.* to 'oozie'@'$NodeName' identified by '$Mysqlpasswd';
-	grant all privileges on hive.* to 'hive'@'$NodeName' identified by '$Mysqlpasswd';
-	grant all privileges on sentry.* to 'sentry'@'$NodeName' identified by '$Mysqlpasswd';
-	grant all privileges on hue.* to 'hue'@'$NodeName' identified by '$Mysqlpasswd';
-	grant all privileges on nav.* to 'nav'@'$NodeName' identified by '$Mysqlpasswd';
-	grant all privileges on navms.* to 'navms'@'$NodeName' identified by '$Mysqlpasswd';
+	grant all privileges on amon.* to 'amon'@"$MasterName" identified by "$Mysqlpasswd";
+	grant all privileges on rman.* to 'rman'@"$MasterName" identified by "$Mysqlpasswd";
+	grant all privileges on oozie.* to 'oozie'@"$MasterName" identified by "$Mysqlpasswd";
+	grant all privileges on hive.* to 'hive'@"$MasterName" identified by "$Mysqlpasswd";
+	grant all privileges on sentry.* to 'sentry'@"$MasterName" identified by "$Mysqlpasswd";
+	grant all privileges on hue.* to 'hue'@"$MasterName" identified by "$Mysqlpasswd";
+	grant all privileges on nav.* to 'nav'@"$MasterName" identified by "$Mysqlpasswd";
+	grant all privileges on navms.* to 'navms'@"$MasterName" identified by "$Mysqlpasswd";
 	flush privileges;"
 	echo "mysql install success"
 
@@ -113,10 +116,10 @@ NodeName=`cat /etc/hosts | grep -v "localhost" | awk '/./ {print $2}' | head -n1
 	systemctl enable ntpd
 #cm install
 	yum -y install cloudera* >/dev/null 2>>err.log
-#	yum -y install mysql-connector-java >/dev/null 2>>err.log
+	yum -y install mysql-connector-java >/dev/null 2>>err.log
 	cp $PWD/file/mysql-connector-java-5.1.34.jar /usr/share/cmf/lib/
 	/usr/share/cmf/schema/scm_prepare_database.sh mysql cm -hlocalhost -uroot -proot@123 --scm-host localhost scm scm scm
-	sed -i "3c server_host=$NodeName" /etc/cloudera-scm-agent/config.ini
+	sed -i "3c server_host=$MasterName" /etc/cloudera-scm-agent/config.ini
 	/etc/init.d/cloudera-scm-agent start
 	/etc/init.d/cloudera-scm-server start
 	yum install expect -y >/dev/null 2>>err.log

@@ -19,6 +19,13 @@ virsh net-destroy default
 
 virsh net-undefine default
 systemctl stop libvirtd
-rm -f $Yumdir/*
-cp /root/yum.repo $Yumdir/
-cp /root/cm.repo $Yumdir/
+systemctl disable libvirtd
+:<<!
+for i in `ls $Yumdir/`
+do 
+	mv $Yumdir/$i $Yumdir/$i.bak	
+done
+#rm -f $Yumdir/*
+cp /root/yum.repo $Yumdir/yum.repo
+cp /root/cm.repo $Yumdir/cm.repo
+!
