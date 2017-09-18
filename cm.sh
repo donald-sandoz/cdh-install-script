@@ -20,12 +20,11 @@ virsh net-destroy default
 virsh net-undefine default
 systemctl stop libvirtd
 systemctl disable libvirtd
-:<<!
-for i in `ls $Yumdir/`
-do 
-	mv $Yumdir/$i $Yumdir/$i.bak	
-done
-#rm -f $Yumdir/*
-cp /root/yum.repo $Yumdir/yum.repo
-cp /root/cm.repo $Yumdir/cm.repo
-!
+
+
+#操作系统内核设置
+echo never >  /sys/kernel/mm/redhat_transparent_hugepage/defrag
+echo 'echo never >  /sys/kernel/mm/redhat_transparent_hugepage/defrag' >> /etc/rc.local
+sysctl -w vm.swappiness=10 #临时设置
+echo 'vm.swappiness=10' >> /etc/sysctl.conf 
+sysctl -p #激活设置。

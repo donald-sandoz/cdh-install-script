@@ -2,6 +2,7 @@
 #部署yum源
 export PATH=$PATH
 PWD=`pwd`
+Pwd_Dir=$PWD
 MysqlName="root"
 Mysqlpasswd="root@123"
 Yumdir=/etc/yum.repos.d
@@ -23,8 +24,8 @@ MasterIp=`cat /etc/hosts | grep -v "localhost" | awk '/./ {print $1}' | head -n1
 	mkdir /var/www/html/yum
 	mount -o loop $PWD/file/centos7.iso /var/www/html/yum
 	mv $Yumdir/iso.repo $Yumdir/iso.repo.bak
-	sed -i "3c baseurl=http://$MasterIp/cm" $pwd/file/cm.repo
-	sed -i "3c baseurl=http://$MasterIp/cm" $pwd/file/yum.repo
+	sed -i "3c baseurl=http://$MasterIp/cm" $PWD/file/cm.repo
+	sed -i "3c baseurl=http://$MasterIp/cm" $PWD/file/yum.repo
 	cp $PWD/file/yum.repo $Yumdir/
 	cp -rp $PWD/file/cm /var/www/html/		#配置cm的yum源
 	cp -rp $PWD/file/cdh /var/www/html/			#
@@ -32,7 +33,7 @@ MasterIp=`cat /etc/hosts | grep -v "localhost" | awk '/./ {print $1}' | head -n1
 	cd /var/www/html/cm
 	createrepo .
 	echo "success mount......"
-	cd /root/cm
+	cd $Pwd_Dir
 #mysql install
 	yum install mariadb-server -y >/dev/null 2>>err.log
 	echo "y" | cp -b $PWD/file/my.cnf.mariadb /etc/my.cnf	
@@ -76,7 +77,7 @@ MasterIp=`cat /etc/hosts | grep -v "localhost" | awk '/./ {print $1}' | head -n1
 	echo "mysql install success"
 
 
-#krb5 install
+krb5 install
 	yum install krb5* -y >/dev/null 2>>err.log
 	echo "y" | cp -b $PWD/file/krb5.conf /etc/
 	echo "y" | cp -b $PWD/file/kdc.conf /var/kerberos/krb5kdc
